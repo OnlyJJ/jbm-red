@@ -275,10 +275,10 @@ public class JmService {
 			}
 			Thread.sleep(10000);
 			int real = findOnline(roomId);
-			boolean socketInroom = false;
-			if(real < 45) {
-				socketInroom = true;
-			}
+			boolean socketInroom = true;
+//			if(real < 45) {
+//				socketInroom = true;
+//			}
 			String[] userIds = RandomUtil.getUserIds();
 			List<String> list = Arrays.asList(userIds);
 			Collections.shuffle(list);
@@ -286,7 +286,7 @@ public class JmService {
 			int size = list.size();
 			if(socketInroom) {
 				for(int i=0; i<size; i++) {
-					if(index > 20) {
+					if(index > 17) {
 						return;
 					}
 					String userId = list.get(i);
