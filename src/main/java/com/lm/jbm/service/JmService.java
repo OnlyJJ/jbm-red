@@ -30,6 +30,17 @@ public class JmService {
 	public static final String U16 = PropertiesUtil.getValue("U16");
 	public static final String U32 = PropertiesUtil.getValue("U32");
 
+	public static String getSessionId(String userId) {
+		String sessionId = serssionMap.get(userId);
+		if(StringUtils.isEmpty(sessionId)) {
+			sessionId = login(userId, RandomUtil.getPwd(), RandomUtil.getIp());
+			if(sessionId != null && !StringUtils.isEmpty(sessionId)) {
+				serssionMap.put(userId, sessionId);
+			}
+		}
+		return sessionId;
+	}
+	
 	public static String login(String userId, String pwd, String ip) {
 		try {
 			JSONObject json = new JSONObject();
@@ -156,8 +167,8 @@ public class JmService {
 	public static boolean checkFreeTime() {
 		try {
 			Date now = new Date();
-			String str1 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 08:00:00";
-			String str2 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 23:50:00";
+			String str1 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 01:30:00";
+			String str2 = DateUtil.format2Str(now, "yyyy-MM-dd") + " 08:00:00";
 			Date d = DateUtil.parse(str1, "yyyy-MM-dd HH:mm:ss");
 			Date d2 = DateUtil.parse(str2, "yyyy-MM-dd HH:mm:ss");
 			if(now.after(d) && now.before(d2)) {
@@ -221,7 +232,7 @@ public class JmService {
 				}
 				String uid = list.get(i);
 				String ip = RandomUtil.getUserIp(uid);
-				String sessionId = login(uid, RandomUtil.getPwd(), ip); 
+				String sessionId = getSessionId(uid);
 				JSONObject json = new JSONObject();
 				JSONObject session = new JSONObject();
 				session.put("b", sessionId);
@@ -259,12 +270,13 @@ public class JmService {
 	public static void grapReb(String roomId) {
 		try {
 			if(checkFreeTime()) {
-				
+				System.err.println("凌晨时段，不参与抢红包！");
+				return;
 			}
 			Thread.sleep(10000);
 			int real = findOnline(roomId);
 			boolean socketInroom = false;
-			if(real < 30) {
+			if(real < 45) {
 				socketInroom = true;
 			}
 			String[] userIds = RandomUtil.getUserIds();

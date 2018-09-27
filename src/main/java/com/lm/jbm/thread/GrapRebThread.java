@@ -28,7 +28,7 @@ public class GrapRebThread implements Runnable {
 		try {
 			String ip = RandomUtil.getUserIp(userId);
 			socket = SocketUtil.inRoom(roomId, userId);
-			String session = JmService.serssionMap.get(userId);
+			String session = JmService.getSessionId(userId);
 			while(true) {
 				String msg = SocketUtil.recieve(socket);
 				JSONObject ret = JsonUtil.strToJsonObject(msg);
