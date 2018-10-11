@@ -40,6 +40,13 @@ public class GrapRebThread implements Runnable {
 						switch(type) {
 						case 8:
 							if(content != null && content.containsKey("id")) {
+								if(content.containsKey("isOpen")) {
+									int isOpen = content.getIntValue("isOpen");
+									if(isOpen == 0) {
+										System.err.println("本房间红包，不参与！");
+										break;
+									}
+								}
 								String rebId = content.getString("id");
 								JmService.grapReb(userId, session, rebId, ip);
 								break;

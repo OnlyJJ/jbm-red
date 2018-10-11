@@ -267,7 +267,7 @@ public class JmService {
 		throw new Exception("退出监听用户socket");
 	}
 	
-	public static void grapReb(String roomId) {
+	public static void grapReb(String roomId, int num) {
 		try {
 			if(checkFreeTime()) {
 				System.err.println("凌晨时段，不参与抢红包！");
@@ -276,9 +276,6 @@ public class JmService {
 			Thread.sleep(10000);
 			int real = findOnline(roomId);
 			boolean socketInroom = true;
-//			if(real < 45) {
-//				socketInroom = true;
-//			}
 			String[] userIds = RandomUtil.getUserIds();
 			List<String> list = Arrays.asList(userIds);
 			Collections.shuffle(list);
@@ -286,8 +283,30 @@ public class JmService {
 			int size = list.size();
 			if(socketInroom) {
 				for(int i=0; i<size; i++) {
-					if(index > 17) {
-						return;
+					if(num > 40) { // 红包个数区间
+						if(index > 20) { // 抢红包总个数
+							return;
+						} 
+					} else if(num > 30 && num <= 40) {
+						if(index > 18) {
+							return;
+						} 
+					} else if(num > 20 && num <=30) {
+						if(index > 15) {
+							return;
+						} 
+					} else if(num > 10 && num <= 20) {
+						if(index > 10) {
+							return;
+						} 
+					} else if(num > 5 && num <= 10) {
+						if(index > 5) {
+							return;
+						} 
+					} else {
+						if(index > 3) {
+							return;
+						} 
 					}
 					String userId = list.get(i);
 					if(grabMap.containsKey(userId)) {
@@ -299,6 +318,7 @@ public class JmService {
 					ThreadManager.getInstance().execute(reb);
 					index++;
 				}
+				System.err.println("本次参与抢红包总人数：" + index);
 			} else {
 				String userId = list.get(RandomUtil.getRandom(0, list.size()));
 				if(grabMap.containsKey(userId)) {

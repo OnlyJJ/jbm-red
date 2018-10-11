@@ -71,7 +71,7 @@ public class SocketInThread implements Runnable {
 					case 8:
 						if(content != null && content.containsKey("id")) {
 							String id = content.getString("id");
-							JmService.grapReb(id);
+//							JmService.grapReb(id);
 						}
 						break;
 					case 50: 
@@ -79,9 +79,10 @@ public class SocketInThread implements Runnable {
 							String roomId = content.getString("roomId");
 							if(content.containsKey("uriMsg")) {
 								String uriMsg = content.getString("uriMsg");
+								int num = content.getIntValue("num");
 								if(uriMsg.indexOf("红包") > -1) {
-									System.out.println("收到全站红包通知，开始蹲守房间：" + roomId);
-									JmService.grapReb(roomId);
+									System.out.println("收到全站红包通知，开始蹲守房间：" + roomId + ",红包个数：" + num);
+									JmService.grapReb(roomId, num);
 								}
 							}
 						}
