@@ -26,6 +26,7 @@ public class JmService {
 	public static ConcurrentHashMap<String, String> grabMap = new ConcurrentHashMap<String, String>(512);
 	public static final String U1 = PropertiesUtil.getValue("U1");
 	public static final String U9 = PropertiesUtil.getValue("U9");
+	public static final String U11 = PropertiesUtil.getValue("U11");
 	public static final String U15 = PropertiesUtil.getValue("U15");
 	public static final String U16 = PropertiesUtil.getValue("U16");
 	public static final String U32 = PropertiesUtil.getValue("U32");
@@ -183,6 +184,7 @@ public class JmService {
 		try {
 			grabMap.remove(userId);
 			JSONObject json = new JSONObject();
+			JSONObject info = new JSONObject();
 			JSONObject session = new JSONObject();
 			session.put("b", sessionId);
 			
@@ -197,6 +199,7 @@ public class JmService {
 			json.put("userbaseinfo", userbaseinfo);
 			json.put("redpacketsendvo", redpacketsendvo);
 			
+			boolean success = false;
 			String str = json.toString();
 			String res = HttpUtils.post3(U32, str, ip);
 			if(StringUtils.isNotEmpty(res)) {
@@ -207,7 +210,49 @@ public class JmService {
 					StringBuilder msg = new StringBuilder();
 					msg.append(userId).append("抢红包，抢到：").append("X").append(gold).append("个金币");
 					System.err.println(msg.toString());
+					success = true;
 				}
+			}
+			
+			// 摘桃成功后，触发修改昵称
+			if(success && RandomUtil.isTrue()) {
+				info.put("session", session);
+				JSONObject userbaseinfo1 = new JSONObject();
+				userbaseinfo1.put("a", userId);
+				info.put("userbaseinfo", userbaseinfo1);
+				JSONObject anchorinfo = new JSONObject();
+				String nickname = RandomUtil.getNickname(userId);
+				anchorinfo.put("d", nickname);
+				String remark = RandomUtil.getRemark(userId);
+				if(StringUtils.isNotEmpty(remark)) {
+					anchorinfo.put("h", remark);
+				} else {
+					anchorinfo.put("h", "暂无");
+				}
+				anchorinfo.put("y", "");
+				anchorinfo.put("x", "");
+				anchorinfo.put("z", "");
+				String brith = RandomUtil.getBrithday(userId);
+				if(StringUtils.isNotEmpty(brith)) {
+					anchorinfo.put("m", brith);
+				}
+				anchorinfo.put("l", "男");
+				info.put("anchorinfo", anchorinfo);
+				String resp = HttpUtils.post3(U11, info.toString(), ip);
+				if(StringUtils.isNotEmpty(resp)) {
+					JSONObject data = JsonUtil.strToJsonObject(resp);
+					if(data != null && data.containsKey("result")) {
+						JSONObject result = data.getJSONObject("result");
+						int a = result.getIntValue("a");
+						if(a == 2020) { // 昵称被占用
+							nickname = RandomUtil.reSetNickname(nickname);
+							anchorinfo.put("d", nickname);
+							info.put("anchorinfo", anchorinfo);
+							HttpUtils.post3(U11, info.toString(), ip);
+						}
+					}
+				}
+				System.err.println("抢红包成功，修改昵称：" + userId + "，nickname：" + nickname);
 			}
 		} catch(Exception e) {
 			throw e;
@@ -283,28 +328,40 @@ public class JmService {
 			int size = list.size();
 			if(socketInroom) {
 				for(int i=0; i<size; i++) {
-					if(num > 40) { // 红包个数区间
-						if(index > 20) { // 抢红包总个数
+					if(num >= 45) { // 红包个数区间
+						if(index > 23) { // 抢红包总个数
 							return;
 						} 
-					} else if(num > 30 && num <= 40) {
-						if(index > 18) {
+					} else if(num >= 35) {
+						if(index > 20) {
 							return;
 						} 
-					} else if(num > 20 && num <=30) {
-						if(index > 15) {
+					} else if(num >= 30) {
+						if(index > 16) {
 							return;
 						} 
-					} else if(num > 10 && num <= 20) {
+					} else if(num >= 25) {
+						if(index > 13) {
+							return;
+						} 
+					} else if(num >= 20) {
 						if(index > 10) {
 							return;
 						} 
-					} else if(num > 5 && num <= 10) {
+					} else if(num >= 15) {
+						if(index > 8) {
+							return;
+						} 
+					} else if(num >= 10) {
 						if(index > 5) {
 							return;
 						} 
-					} else {
+					} else if(num >= 5) {
 						if(index > 3) {
+							return;
+						} 
+					} else {
+						if(index > 2) {
 							return;
 						} 
 					}
