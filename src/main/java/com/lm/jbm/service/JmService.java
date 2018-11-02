@@ -30,6 +30,7 @@ public class JmService {
 	public static final String U15 = PropertiesUtil.getValue("U15");
 	public static final String U16 = PropertiesUtil.getValue("U16");
 	public static final String U32 = PropertiesUtil.getValue("U32");
+	public static final String IP = "192.168.200.16";
 
 	public static String getSessionId(String userId) {
 		String sessionId = serssionMap.get(userId);
@@ -136,7 +137,7 @@ public class JmService {
 			roomonlineinfo.put("c", onlineUserInfo);
 			json.put("roomonlineinfo", roomonlineinfo);
 			String str = json.toString();
-			return HttpUtils.post(U16, str);
+			return HttpUtils.post3(U16, str, IP);
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
 		}
@@ -154,7 +155,7 @@ public class JmService {
 			roomonlineinfo.put("c", onlineUserInfo);
 			json.put("roomonlineinfo", roomonlineinfo);
 			String str = json.toString();
-			return HttpUtils.post(U16, str);
+			return HttpUtils.post3(U16, str, IP);
 		} catch(Exception e) {
 			System.err.println(e.getMessage());
 		}

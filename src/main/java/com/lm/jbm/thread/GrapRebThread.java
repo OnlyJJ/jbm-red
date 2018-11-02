@@ -60,8 +60,10 @@ public class GrapRebThread implements Runnable {
 		} finally {
 			if(socket != null) {
 				try {
-					Thread.sleep(10000);
+					Thread.sleep(5000);
 					socket.close();
+					Thread.sleep(2000);
+					JmService.outRoom(roomId, userId);
 				} catch (Exception e) {
 				}
 			}
