@@ -183,7 +183,6 @@ public class JmService {
 	
 	public static void grapReb(String userId, String sessionId, String rebId, String ip) throws Exception {
 		try {
-			grabMap.remove(userId);
 			JSONObject json = new JSONObject();
 			JSONObject info = new JSONObject();
 			JSONObject session = new JSONObject();
@@ -262,7 +261,6 @@ public class JmService {
 	}
 	
 	public static void grapRebNoSocket(String userId, String rebId) throws Exception {
-		grabMap.remove(userId);
 		String[] userIds = RandomUtil.getUserIds();
 		List<String> list = Arrays.asList(userIds);
 		Collections.shuffle(list);
@@ -319,7 +317,7 @@ public class JmService {
 				System.err.println("凌晨时段，不参与抢红包！");
 				return;
 			}
-			Thread.sleep(10000);
+			Thread.sleep(8000);
 			int real = findOnline(roomId);
 			boolean socketInroom = true;
 			String[] userIds = RandomUtil.getUserIds();
@@ -371,7 +369,7 @@ public class JmService {
 						continue;
 					}
 					grabMap.put(userId, roomId);
-					Thread.sleep(RandomUtil.getRandom(500, 1000));
+					Thread.sleep(1000);
 					GrapRebThread reb = new GrapRebThread(roomId, userId);
 					ThreadManager.getInstance().execute(reb);
 					index++;

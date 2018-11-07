@@ -51,14 +51,16 @@ public class GrapRebNoInroomThread implements Runnable {
 			}
 		} catch (Exception e) {
 		} finally {
-			if(socket != null) {
-				try {
+			try {
+				if(socket != null) {
 					Thread.sleep(10000);
 					socket.close();
-					Thread.sleep(3000);
-					JmService.outRoom(roomId, userId);
-				} catch (Exception e) {
 				}
+				Thread.sleep(5000);
+				JmService.outRoom(roomId, userId);
+				
+				JmService.grabMap.remove(userId);
+			} catch (Exception e) {
 			}
 		}
 	}
