@@ -30,14 +30,18 @@ public class JmService {
 	public static final String U15 = PropertiesUtil.getValue("U15");
 	public static final String U16 = PropertiesUtil.getValue("U16");
 	public static final String U32 = PropertiesUtil.getValue("U32");
+	public static final String U48 = PropertiesUtil.getValue("U48");
+	public static final String U50 = PropertiesUtil.getValue("U50");
 	public static final String IP = "192.168.200.16";
 
 	public static String getSessionId(String userId) {
 		String sessionId = serssionMap.get(userId);
 		if(StringUtils.isEmpty(sessionId)) {
-			sessionId = login(userId, RandomUtil.getPwd(), RandomUtil.getIp());
+			String ip = RandomUtil.getUserIp(userId);
+			sessionId = login(userId, RandomUtil.getPwd(), ip);
 			if(sessionId != null && !StringUtils.isEmpty(sessionId)) {
 				serssionMap.put(userId, sessionId);
+				sign(userId, sessionId, ip);
 			}
 		}
 		return sessionId;
@@ -68,6 +72,37 @@ public class JmService {
 			System.err.println(e.getMessage());
 		}
 		return null;
+	}
+	
+	public static void sign(String userId, String sessionId, String ip) {
+		JSONObject json = new JSONObject();
+		JSONObject session = new JSONObject();
+		session.put("b", sessionId);
+		
+		JSONObject userbaseinfo = new JSONObject();
+		userbaseinfo.put("a", userId);
+		userbaseinfo.put("j", ip);
+		
+		json.put("session", session);
+		json.put("userbaseinfo", userbaseinfo);
+		
+		// 是否签到
+		boolean flag = false;
+		String res = HttpUtils.post3(U50, json.toString(), ip);
+		if(StringUtils.isNotEmpty(res)) {
+			JSONObject data = JsonUtil.strToJsonObject(res);
+			if(data != null && data.containsKey("signinfovo")) {
+				JSONObject ret = JsonUtil.strToJsonObject(data.getString("signinfovo"));
+				String signFlag = ret.getString("e");
+				if(signFlag.equalsIgnoreCase("n")) {
+					flag = true;
+				}
+			}
+		}
+		if(flag) {
+			System.err.println("签到：" + userId);
+			HttpUtils.post3(U48, json.toString(), ip);
+		}
 	}
 	
 	public static int findOnline(String roomId) throws Exception{
