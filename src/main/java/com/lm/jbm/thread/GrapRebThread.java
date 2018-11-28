@@ -48,7 +48,7 @@ public class GrapRebThread implements Runnable {
 									}
 								}
 								String rebId = content.getString("id");
-								JmService.grapReb(userId, session, rebId, ip);
+								JmService.grapReb(roomId, userId, session, rebId, ip);
 								break;
 							}
 							break;

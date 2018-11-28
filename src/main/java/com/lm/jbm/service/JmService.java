@@ -17,11 +17,13 @@ import com.lm.jbm.thread.ThreadManager;
 import com.lm.jbm.utils.DateUtil;
 import com.lm.jbm.utils.HttpUtils;
 import com.lm.jbm.utils.JsonUtil;
+import com.lm.jbm.utils.LogUtil;
 import com.lm.jbm.utils.PropertiesUtil;
 import com.lm.jbm.utils.RandomUtil;
 
 
 public class JmService {
+	public static ConcurrentHashMap<String, Long> goldMap = new ConcurrentHashMap<String, Long>(512);
 	public static ConcurrentHashMap<String, String> serssionMap = new ConcurrentHashMap<String, String>(512);
 	public static ConcurrentHashMap<String, String> grabMap = new ConcurrentHashMap<String, String>(512);
 	public static final String U1 = PropertiesUtil.getValue("U1");
@@ -33,6 +35,8 @@ public class JmService {
 	public static final String U48 = PropertiesUtil.getValue("U48");
 	public static final String U50 = PropertiesUtil.getValue("U50");
 	public static final String IP = "192.168.200.16";
+	public static final String TOTLE_KEY = "gold";
+	public static final String NUMBER_KEY = "number";
 
 	public static String getSessionId(String userId) {
 		String sessionId = serssionMap.get(userId);
@@ -216,7 +220,7 @@ public class JmService {
 		return false;
 	}
 	
-	public static void grapReb(String userId, String sessionId, String rebId, String ip) throws Exception {
+	public static void grapReb(String roomId, String userId, String sessionId, String rebId, String ip) throws Exception {
 		try {
 			JSONObject json = new JSONObject();
 			JSONObject info = new JSONObject();
@@ -245,6 +249,21 @@ public class JmService {
 					StringBuilder msg = new StringBuilder();
 					msg.append(userId).append("抢红包，抢到：").append("X").append(gold).append("个金币");
 					System.err.println(msg.toString());
+					long total = gold;
+					long num = 1;
+					long nowTotal = gold;
+					if(goldMap.containsKey(TOTLE_KEY)) {
+						total += goldMap.get(TOTLE_KEY);
+					}  
+					if(goldMap.containsKey(NUMBER_KEY)) {
+						num += goldMap.get(NUMBER_KEY);
+					}
+					if(goldMap.containsKey(roomId)) {
+						nowTotal += goldMap.get(roomId);
+					}
+					goldMap.put(TOTLE_KEY, total);
+					goldMap.put(NUMBER_KEY, num);
+					goldMap.put(roomId, nowTotal);
 					success = true;
 				}
 			}
@@ -410,6 +429,12 @@ public class JmService {
 					index++;
 				}
 				System.err.println("本次参与抢红包总人数：" + index);
+				LogUtil.log.info("抢红包房间：" + roomId 
+						+ "，参与人数: " + index 
+						+ "，抢成功人数：" + goldMap.get(NUMBER_KEY)
+						+ "，本房间总共抢到：" + goldMap.get(roomId)
+						+ "，当天总共抢到：" +  goldMap.get(TOTLE_KEY)
+						);
 			} else {
 				String userId = list.get(RandomUtil.getRandom(0, list.size()));
 				if(grabMap.containsKey(userId)) {
