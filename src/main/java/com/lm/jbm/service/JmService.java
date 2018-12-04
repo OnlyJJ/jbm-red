@@ -249,6 +249,7 @@ public class JmService {
 					StringBuilder msg = new StringBuilder();
 					msg.append(userId).append("抢红包，抢到：").append("X").append(gold).append("个金币");
 					System.err.println(msg.toString());
+					LogUtil.log.info("抢红包：" + userId + "，抢到：" + gold);
 					long total = gold;
 					long num = 1;
 					long nowTotal = gold;
@@ -383,35 +384,35 @@ public class JmService {
 				for(int i=0; i<size; i++) {
 					if(num >= 45) { // 红包个数区间
 						if(index > 23) { // 抢红包总个数
-							return;
+							break;
 						} 
 					} else if(num >= 35) {
 						if(index > 20) {
-							return;
+							break;
 						} 
 					} else if(num >= 30) {
 						if(index > 16) {
-							return;
+							break;
 						} 
 					} else if(num >= 25) {
 						if(index > 13) {
-							return;
+							break;
 						} 
 					} else if(num >= 20) {
 						if(index > 10) {
-							return;
+							break;
 						} 
 					} else if(num >= 15) {
 						if(index > 8) {
-							return;
+							break;
 						} 
 					} else if(num >= 10) {
 						if(index > 5) {
-							return;
+							break;
 						} 
 					} else if(num >= 5) {
 						if(index > 3) {
-							return;
+							break;
 						} 
 					} else {
 						if(index > 2) {
@@ -429,6 +430,7 @@ public class JmService {
 					index++;
 				}
 				System.err.println("本次参与抢红包总人数：" + index);
+				Thread.sleep(60000);
 				LogUtil.log.info("抢红包房间：" + roomId 
 						+ "，参与人数: " + index 
 						+ "，抢成功人数：" + goldMap.get(NUMBER_KEY)

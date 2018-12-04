@@ -512,7 +512,7 @@ public class RandomUtil {
 	}
 	
 	public static String getRemark(String userId) {
-		if(remarkMap.contains(userId)) {
+		if(remarkMap.containsKey(userId)) {
 			return "";
 		}
 		String rem = remark[getRandom(0,remark.length)];
@@ -523,7 +523,7 @@ public class RandomUtil {
 	}
 	
 	public static String getBrithday(String userId) {
-		if(briMap.contains(userId)) {
+		if(briMap.containsKey(userId)) {
 			return "";
 		}
 		String y = year[getRandom(0, year.length)];
